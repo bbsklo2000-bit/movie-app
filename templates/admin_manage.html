@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Movie & Series - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>body { font-family: 'Kanit', sans-serif; }</style>
+</head>
+<body class="bg-white flex min-h-screen">
+
+    <aside class="w-64 bg-[#7a7a7a] text-white flex flex-col sticky top-0 h-screen">
+        <div class="p-6 flex items-center space-x-2 border-b border-gray-500/30">
+            <div class="bg-white p-1 rounded-full text-black text-xs">🎬</div>
+            <span class="font-bold">Movie Hub Admin</span>
+        </div>
+        <nav class="flex-1 mt-4 text-sm">
+            <a href="/admin/dashboard" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-chart-line w-5"></i> <span>Dashboard</span>
+            </a>
+            <a href="/admin/manage" class="flex items-center space-x-3 px-6 py-4 bg-gray-600 shadow-inner">
+                <i class="fa-solid fa-film w-5"></i> <span>Manage Movie & Series</span>
+            </a>
+            <a href="/admin/members" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-users w-5"></i> <span>Members</span>
+            </a>
+            <a href="/admin/suggestions" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-lightbulb w-5"></i> <span>Suggestions</span>
+            </a>
+            <a href="/admin/report" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-file-lines w-5"></i> <span>Report</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="flex-1 flex flex-col">
+        <header class="bg-[#8b2b2b] p-3 text-white flex justify-between items-center shadow-md">
+            <div class="flex items-center space-x-4 ml-4">
+                <i class="fa-solid fa-bars cursor-pointer"></i>
+                <a href="/"><i class="fa-solid fa-house"></i></a>
+            </div>
+            <div class="flex items-center space-x-2 mr-4">
+                <span class="font-bold">{{ session.get('username') }}</span>
+                <div class="bg-white w-8 h-8 rounded-full text-[#8b2b2b] flex items-center justify-center">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-center gap-4 mb-10">
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
+                        <input type="text" placeholder="ค้นหาภาพยนตร์หรือซีรีส์" 
+                               class="w-full bg-[#7a7a7a] text-white placeholder-gray-300 py-2 pl-10 pr-4 rounded text-sm outline-none">
+                    </div>
+                    <a href="/admin/add_movie" class="bg-[#8b2b2b] text-white px-4 py-2 rounded text-xs font-medium hover:bg-red-800 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-plus"></i> <span>เพิ่มข้อมูลภาพยนตร์ / ซีรีส์</span>
+                    </a>
+                </div>
+
+                <div class="space-y-8">
+                    {% for item in items %}
+                    <div class="flex space-x-6 items-start">
+                        <div class="w-24 h-36 shrink-0 bg-gray-200 rounded overflow-hidden shadow-md">
+                            <img src="{{ item.img }}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/100x150?text=No+Image'">
+                        </div>
+                        
+                        <div class="flex-1 text-sm space-y-1">
+                            <h3 class="font-bold text-gray-800">ชื่อ : {{ item.title }}</h3>
+                            <p class="text-gray-600 italic">ปีที่ฉาย : {{ item.year }}</p>
+                            <p class="text-gray-600 capitalize">ประเภท : {{ item.type }}</p>
+                            <p class="text-gray-600">หมวดหมู่ : {{ item.category }}</p>
+                            <p class="text-gray-400 text-[11px] mt-2">วันที่เพิ่ม : {{ item.date_added }}</p>
+                            
+                            <div class="flex space-x-2 mt-4">
+                                <button class="bg-yellow-400 text-black px-3 py-1 rounded-full text-[10px] font-bold flex items-center space-x-1 hover:bg-yellow-500">
+                                    <i class="fa-solid fa-edit text-[8px]"></i> <span>แก้ไขข้อมูล</span>
+                                </button>
+                                <a href="/admin/delete/{{ item.id }}" onclick="return confirm('ยืนยันการลบข้อมูลนี้หรือไม่?')" 
+                                   class="bg-[#8b2b2b] text-white px-3 py-1 rounded-full text-[10px] font-bold flex items-center space-x-1 hover:bg-red-900">
+                                    <i class="fa-solid fa-trash text-[8px]"></i> <span>ลบข้อมูล</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-20 text-gray-400">
+                        <i class="fa-solid fa-box-open text-4xl mb-2"></i>
+                        <p>ยังไม่มีข้อมูลในระบบ</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

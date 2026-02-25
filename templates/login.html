@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>เข้าสู่ระบบ - Movie Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Kanit', sans-serif; }</style>
+</head>
+<body class="bg-[#4a4a4a] flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-2xl w-96 text-zinc-800">
+        <h2 class="text-2xl font-bold mb-6 text-center text-[#8b2b2b]">เข้าสู่ระบบ</h2>
+        
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <p class="text-red-500 text-sm mb-4 text-center">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="mb-4">
+                <label class="block text-sm mb-1">ชื่อผู้ใช้งาน (admin หรือ user1)</label>
+                <input type="text" name="username" class="w-full border rounded px-3 py-2 outline-none focus:ring-2 focus:ring-red-400" required>
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm mb-1">รหัสผ่าน</label>
+                <input type="password" name="password" class="w-full border rounded px-3 py-2 outline-none focus:ring-2 focus:ring-red-400" required>
+            </div>
+            <button type="submit" class="w-full bg-[#8b2b2b] text-white py-2 rounded-md hover:bg-red-800 transition">Login</button>
+        </form>
+        <div class="mt-4 text-center">
+            <a href="/" class="text-sm text-gray-500 hover:underline text-center">กลับหน้าหลัก</a>
+        </div>
+    </div>
+</body>
+</html>

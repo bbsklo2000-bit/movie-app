@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Suggestions - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>body { font-family: 'Kanit', sans-serif; }</style>
+</head>
+<body class="bg-white flex min-h-screen">
+
+    <aside class="w-64 bg-[#7a7a7a] text-white flex flex-col sticky top-0 h-screen">
+        <div class="p-6 flex items-center space-x-2 border-b border-gray-500/30">
+            <div class="bg-white p-1 rounded-full text-black text-xs">🎬</div>
+            <span class="font-bold">Movie Hub Admin</span>
+        </div>
+        <nav class="flex-1 mt-4 text-sm">
+            <a href="/admin/dashboard" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-chart-line w-5"></i> <span>Dashboard</span>
+            </a>
+            <a href="/admin/manage" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-film w-5"></i> <span>Manage Movie & Series</span>
+            </a>
+            <a href="/admin/members" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-users w-5"></i> <span>Members</span>
+            </a>
+            <a href="/admin/suggestions" class="flex items-center space-x-3 px-6 py-4 bg-gray-600 shadow-inner">
+                <i class="fa-solid fa-lightbulb w-5"></i> <span>Suggestions</span>
+            </a>
+            <a href="/admin/report" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-file-lines w-5"></i> <span>Report</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="flex-1 flex flex-col bg-zinc-50">
+        <header class="bg-[#8b2b2b] p-3 text-white flex justify-between items-center shadow-md">
+            <div class="flex items-center space-x-4 ml-4">
+                <i class="fa-solid fa-bars"></i>
+                <a href="/"><i class="fa-solid fa-house"></i></a>
+            </div>
+            <div class="flex items-center space-x-2 mr-4">
+                <span class="text-xs">{{ session.get('username') }}</span>
+                <div class="bg-white w-8 h-8 rounded-full text-[#8b2b2b] flex items-center justify-center">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-8">
+            <div class="max-w-5xl mx-auto bg-white rounded-lg shadow-md p-6 border border-gray-200">
+                <h2 class="text-xl font-bold mb-6 text-gray-700 border-l-4 border-[#8b2b2b] pl-3">รายการแนะนำจากสมาชิก</h2>
+                <div class="space-y-4">
+                    {% for sug in suggests %}
+                    <div class="border p-4 rounded-lg flex justify-between items-center transition {{ 'opacity-60 bg-gray-50' if sug.status != 'pending' else 'hover:border-[#8b2b2b]' }}">
+                        <div class="flex-1">
+                            <span class="text-[10px] {% if sug.type == 'movie' %}bg-blue-600{% else %}bg-purple-600{% endif %} text-white px-2 py-0.5 rounded font-bold uppercase">{{ sug.type }}</span>
+                            <h4 class="font-bold text-lg mt-1 text-zinc-800">{{ sug.title }} <span class="text-gray-400 font-normal">({{ sug.year }})</span></h4>
+                            <p class="text-[11px] text-gray-500 mt-1">
+                                <i class="fa-solid fa-user-pen mr-1"></i> เสนอโดย: <span class="font-bold text-zinc-700">{{ sug.username }}</span> | 
+                                <i class="fa-solid fa-tags mr-1 ml-2"></i> หมวดหมู่: {{ sug.category }}
+                            </p>
+                            <p class="text-sm mt-3 text-gray-600 bg-gray-50 p-3 rounded border-l-2 border-gray-300 italic">"{{ sug.summary }}"</p>
+                        </div>
+                        <div class="flex flex-col space-y-2 ml-6 shrink-0">
+                            {% if sug.status == 'pending' %}
+                            <a href="/admin/approve/{{ sug.id }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full text-xs font-bold shadow-sm transition text-center">
+                                <i class="fa-solid fa-check mr-1"></i> อนุมัติ
+                            </a>
+                            <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-full text-xs font-bold transition">
+                                ปฏิเสธ
+                            </button>
+                            {% else %}
+                            <span class="px-4 py-2 bg-zinc-200 text-zinc-500 rounded-full text-[10px] font-black uppercase tracking-widest text-center">
+                                {{ sug.status }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-20 text-gray-400">
+                        <i class="fa-solid fa-envelope-open text-4xl mb-4"></i>
+                        <p>ยังไม่มีคำแนะนำส่งเข้ามาในขณะนี้</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>body { font-family: 'Kanit', sans-serif; }</style>
+</head>
+<body class="bg-white flex min-h-screen">
+
+    <aside class="w-64 bg-[#7a7a7a] text-white flex flex-col sticky top-0 h-screen">
+        <div class="p-6 flex items-center space-x-2 border-b border-gray-500/30">
+            <div class="bg-white p-1 rounded-full text-black text-xs">🎬</div>
+            <span class="font-bold">Movie Hub Admin</span>
+        </div>
+        <nav class="flex-1 mt-4 text-sm">
+            <a href="/admin/dashboard" class="flex items-center space-x-3 px-6 py-4 bg-gray-600 shadow-inner">
+                <i class="fa-solid fa-chart-line w-5"></i> <span>Dashboard</span>
+            </a>
+            <a href="/admin/manage" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-film w-5"></i> <span>Manage Movie & Series</span>
+            </a>
+            <a href="/admin/members" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-users w-5"></i> <span>Members</span>
+            </a>
+            <a href="/admin/suggestions" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-lightbulb w-5"></i> <span>Suggestions</span>
+            </a>
+            <a href="/admin/report" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-file-lines w-5"></i> <span>Report</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="flex-1 flex flex-col">
+        <header class="bg-[#8b2b2b] p-3 text-white flex justify-between items-center shadow-md">
+            <div class="flex items-center space-x-4 ml-4">
+                <i class="fa-solid fa-bars cursor-pointer"></i>
+                <a href="/"><i class="fa-solid fa-house"></i></a>
+            </div>
+            <div class="flex items-center space-x-2 mr-4">
+                <span class="font-bold">{{ session.get('username') }}</span>
+                <div class="bg-white w-8 h-8 rounded-full text-[#8b2b2b] flex items-center justify-center">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-zinc-400 p-8 rounded shadow flex items-center justify-between text-white">
+                    <div><h3 class="text-4xl font-bold">{{ m_count }}</h3><p>จำนวนภาพยนตร์</p></div>
+                    <i class="fa-solid fa-film text-4xl opacity-50"></i>
+                </div>
+                <div class="bg-zinc-400 p-8 rounded shadow flex items-center justify-between text-white">
+                    <div><h3 class="text-4xl font-bold">{{ s_count }}</h3><p>จำนวนซีรีส์</p></div>
+                    <i class="fa-solid fa-clapperboard text-4xl opacity-50"></i>
+                </div>
+                <div class="bg-zinc-400 p-8 rounded shadow flex items-center justify-between text-white">
+                    <div><h3 class="text-4xl font-bold">{{ u_count }}</h3><p>จำนวนสมาชิก</p></div>
+                    <i class="fa-solid fa-user-group text-4xl opacity-50"></i>
+                </div>
+                <div class="bg-zinc-400 p-8 rounded shadow flex items-center justify-between text-white">
+                    <div><h3 class="text-4xl font-bold">{{ g_count }}</h3><p>จำนวนคำแนะนำจากสมาชิก</p></div>
+                    <i class="fa-solid fa-comment-dots text-4xl opacity-50"></i>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Kanit', sans-serif; }</style>
+</head>
+<body class="bg-[#4a4a4a] text-white">
+
+    <header class="bg-[#8b2b2b] p-4 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-nowrap">
+        
+            <div class="flex items-center space-x-6 shrink-0">
+                <a href="/" class="bg-white p-2 rounded-full text-xl flex items-center justify-center w-10 h-10 shadow-md">🎬</a>
+                <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium">
+                    <a href="/" class="hover:text-zinc-300 transition">หน้าหลัก</a>
+                    <a href="/?type=movie" class="hover:text-zinc-300 transition">ภาพยนตร์</a>
+                    <a href="/?type=series" class="hover:text-zinc-300 transition">ซีรีส์</a>
+
+                    {% if session.get('username') %}
+                        <a href="/suggest_movie" class="text-zinc-400 hover:text-white transition whitespace-nowrap">แนะนำภาพยนตร์ / ซีรีส์</a>
+
+                        {% if session.get('role') == 'admin' %}
+                            <a href="/admin/dashboard" class="bg-zinc-800 text-white px-3 py-1 rounded-sm font-bold border border-zinc-600 hover:bg-zinc-700 transition whitespace-nowrap">
+                                ⚙️ ระบบแอดมิน
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="/login" class="text-zinc-400 hover:text-white transition whitespace-nowrap">แนะนำภาพยนตร์ / ซีรีส์</a>
+                    {% endif %}
+                </nav>
+            </div>
+
+            <div class="relative flex-1 max-w-lg px-2">
+                <form action="/" method="GET" id="searchForm">
+                    <input type="hidden" name="type" value="{{ request.args.get('type', 'all') }}">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">🔍</span>
+                        <input type="text" id="searchInput" name="search" value="{{ request.args.get('search', '') }}"
+                            placeholder="ค้นหาภาพยนตร์หรือซีรีส์" autocomplete="off"
+                            class="w-full bg-white text-black rounded-sm py-2 pl-10 pr-4 outline-none focus:ring-2 focus:ring-red-400 text-sm">
+                    </div>
+
+                    <div id="categoryPanel" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#1a1a1a] p-8 rounded-md shadow-2xl border border-zinc-700 z-50">
+                        <div class="mb-6">
+                            <p class="text-gray-400 mb-3 text-lg font-bold">ประเภท :</p>
+                            <div class="flex space-x-6">
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="radio" name="type" value="movie" {% if request.args.get('type') == 'movie' %}checked{% endif %}> <span>ภาพยนตร์</span>
+                                </label>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="radio" name="type" value="series" {% if request.args.get('type') == 'series' %}checked{% endif %}> <span>ซีรีส์</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <p class="text-gray-400 mb-4 text-lg font-bold">หมวดหมู่ :</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {% set cats = ['Drama', 'Comedy', 'Action', 'Thriller', 'Horror', 'Survival', 'Fantasy', 'Adventure', 'Sci-Fi', 'Family', 'Animation', 'Musical', 'Crime', 'Romance', 'Psychological', 'Historical'] %}
+                            {% for cat in cats %}
+                            <label class="flex items-center space-x-2 text-sm text-gray-300 hover:text-white cursor-pointer group">
+                                <input type="checkbox" name="category" value="{{ cat|lower }}" 
+                                    {% if cat|lower in request.args.getlist('category') %}checked{% endif %}
+                                    class="rounded-full bg-transparent border-zinc-500 text-red-600 focus:ring-0">
+                                <span>{{ cat }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        <div class="flex justify-center md:justify-end gap-2 pt-4">
+                            <button type="button" onclick="resetFilters()" 
+                                class="bg-zinc-500 text-white text-sm px-4 py-1.5 rounded shadow-sm hover:bg-zinc-600 transition duration-200">
+                                รีเซ็ตค่า
+                            </button>
+                            <button type="submit" 
+                                class="bg-red-700 text-white text-sm px-6 py-1.5 rounded shadow-sm hover:bg-red-800 transition duration-200 font-medium">
+                                ค้นหา
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="flex items-center space-x-3 shrink-0">
+                {% if session.get('username') %}
+                    <div class="hidden sm:block text-right">
+                        <p class="text-[10px] text-gray-300 leading-tight">ยินดีต้อนรับ ({{ session['role'] }})</p>
+                        <p class="text-xs font-bold text-yellow-400 leading-tight">{{ session['username'] }}</p>
+                    </div>
+                    <a href="/logout" class="bg-white text-[#8b2b2b] px-3 py-1.5 rounded-full text-xs font-bold hover:bg-gray-200 transition">Logout</a>
+                {% else %}
+                    <a href="/login" class="text-sm font-medium hover:text-zinc-300 transition whitespace-nowrap">Login</a>
+                    <a href="/signup" class="bg-white text-[#8b2b2b] px-4 py-1.5 rounded-full text-xs font-bold hover:bg-gray-200 transition shadow-md whitespace-nowrap">Sign Up</a>
+                {% endif %}
+            </div>
+
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold italic border-l-4 border-red-600 pl-3">รายการแนะนำ</h2>
+            <span class="text-xs text-gray-400">พบทั้งหมด {{ items|length }} รายการ</span>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-12">
+            {% for item in items %}
+            <div class="text-center group">
+                <a href="{{ url_for('movie_detail', movie_id=item.id) }}">
+                    <div class="relative overflow-hidden rounded-md shadow-lg border border-zinc-600">
+                        <img src="{{ item.img }}" class="h-80 w-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 opacity-0 group-hover:opacity-100 transition">
+                            <span class="text-[10px] bg-red-600 px-2 py-0.5 rounded uppercase">{{ item.category }}</span>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-sm group-hover:text-red-400 font-medium transition">{{ item.title }}</p>
+                </a>
+            </div>
+            {% else %}
+            <div class="col-span-full py-20 text-center text-gray-400">
+                <p class="text-4xl mb-4">💨</p>
+                <p>ไม่พบหนังหรือซีรีส์ในหมวดหมู่นี้</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if session.get('role') == 'admin' %}
+        <div class="bg-zinc-900/50 p-6 rounded-lg border border-red-900/30">
+            <h3 class="text-red-500 font-bold mb-4 border-b border-red-900/30 pb-2 text-sm uppercase">Admin Logs</h3>
+            <div class="h-32 overflow-y-auto text-[10px] font-mono space-y-1">
+                {% for log in user_logs %}
+                <p><span class="text-gray-500">[{{ log.time }}]</span> <span class="text-blue-400">{{ log.user }}</span> -> {{ log.action }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </main>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const categoryPanel = document.getElementById('categoryPanel');
+    const searchForm = document.getElementById('searchForm');
+
+    // โชว์แผงหมวดหมู่เมื่อโฟกัสที่ช่องค้นหา
+    searchInput.addEventListener('focus', () => {
+        categoryPanel.classList.remove('hidden');
+    });
+
+    // ปิดแผงเมื่อคลิกข้างนอกฟอร์ม
+    document.addEventListener('click', (e) => {
+        if (!searchForm.contains(e.target)) {
+            categoryPanel.classList.add('hidden');
+        }
+    });
+
+    // ป้องกันการปิดแผงเมื่อมีการคลิกข้างในแผงหมวดหมู่เอง
+    categoryPanel.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+</script>
+
+<script>
+function resetFilters() {
+    // เลือกฟอร์มที่ครอบส่วน Filter ไว้ (เปลี่ยน 'searchForm' เป็น ID ของ <form> ของคุณ)
+    const form = document.querySelector('form'); 
+    
+    // ล้างค่าข้อความใน Input
+    const searchInput = form.querySelector('input[name="search"]');
+    if (searchInput) searchInput.value = '';
+
+    // ล้าง Checkbox หมวดหมู่
+    const checkboxes = form.querySelectorAll('input[name="category"]');
+    checkboxes.forEach(cb => {
+        cb.checked = false;
+    });
+
+    // รีเซ็ต Radio Button กลับไปที่ตัวแรก (ภาพยนตร์)
+    const radios = form.querySelectorAll('input[name="type"]');
+    if (radios.length > 0) {
+        radios[0].checked = true;
+    }
+}
+</script>
+
+</body>
+</html>

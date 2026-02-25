@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Report - Movie Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>body { font-family: 'Kanit', sans-serif; }</style>
+</head>
+<body class="bg-white flex min-h-screen">
+
+    <aside class="w-64 bg-[#7a7a7a] text-white flex flex-col sticky top-0 h-screen">
+        <div class="p-6 flex items-center space-x-2 border-b border-gray-500/30">
+            <div class="bg-white p-1 rounded-full text-black text-xs">🎬</div>
+            <span class="font-bold">Movie Hub Admin</span>
+        </div>
+        <nav class="flex-1 mt-4 text-sm">
+            <a href="/admin/dashboard" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-chart-line w-5"></i> <span>Dashboard</span>
+            </a>
+            <a href="/admin/manage" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-film w-5"></i> <span>Manage Movie & Series</span>
+            </a>
+            <a href="/admin/members" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 transition">
+                <i class="fa-solid fa-users w-5"></i> <span>Members</span>
+            </a>
+            <a href="/admin/suggestions" class="flex items-center space-x-3 px-6 py-4 hover:bg-gray-600 shadow-inner">
+                <i class="fa-solid fa-lightbulb w-5"></i> <span>Suggestions</span>
+            </a>
+            <a href="/admin/report" class="flex items-center space-x-3 px-6 py-4 bg-gray-600 shadow-inner">
+                <i class="fa-solid fa-file-lines w-5"></i> <span>Report</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="flex-1 flex flex-col bg-zinc-50">
+        <header class="bg-[#8b2b2b] p-3 text-white flex justify-between items-center shadow-md">
+            <div class="flex items-center space-x-4 ml-4">
+                <i class="fa-solid fa-bars"></i>
+                <a href="/"><i class="fa-solid fa-house"></i></a>
+            </div>
+            <div class="flex items-center space-x-2 mr-4">
+                <span class="text-xs">{{ session.get('username') }}</span>
+                <div class="bg-white w-8 h-8 rounded-full text-[#8b2b2b] flex items-center justify-center">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 p-10">
+            <div class="bg-white text-black rounded-lg shadow-2xl p-8 max-w-4xl mx-auto">
+                <h1 class="text-2xl font-bold mb-8 border-l-4 border-red-600 pl-4">ออกรายงานระบบ</h1>
+                
+                <form action="/admin/export_pdf" method="POST">
+                    <div class="space-y-8">
+                        <div class="flex gap-10 justify-center">
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="radio" name="report_type" value="items" checked class="w-5 h-5 accent-red-600">
+                                <span class="group-hover:text-red-600 font-medium">รายงานข้อมูลภาพยนตร์และซีรีส์</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="radio" name="report_type" value="logs" class="w-5 h-5 accent-red-600">
+                                <span class="group-hover:text-red-600 font-medium">รายงานการใช้งานระบบ</span>
+                            </label>
+                        </div>
+
+                        <div class="bg-gray-100 p-6 rounded-lg flex items-center justify-center gap-6">
+                            <div>
+                                <label class="block text-sm text-gray-500 mb-1">เริ่มจากวันที่</label>
+                                <input type="date" name="start_date" required class="border rounded px-4 py-2 outline-none focus:ring-2 focus:ring-red-400">
+                            </div>
+                            <span class="mt-6 font-bold text-gray-400">ถึง</span>
+                            <div>
+                                <label class="block text-sm text-gray-500 mb-1">จนถึงวันที่</label>
+                                <input type="date" name="end_date" required class="border rounded px-4 py-2 outline-none focus:ring-2 focus:ring-red-400">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center gap-10 pt-6">
+                            <button type="submit" class="text-center group">
+                                <div class="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center mb-2 group-hover:bg-red-600 transition">
+                                    <span class="text-2xl group-hover:scale-110 transition">📄</span>
+                                </div>
+                                <p class="text-xs font-bold text-gray-600">Export to PDF</p>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
